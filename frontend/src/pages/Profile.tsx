@@ -9,15 +9,18 @@ type ProfileState = {
 };
 
 export default function Profile() {
+
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  
   const [editing, setEditing] = useState(false);
 
-  const [profile, setProfile] = useState<ProfileState>({
-    name: "Gurpreet Singh",
-    college: "CGC Mohali",
-    intro: "I am a B.Tech CSE student building full-stack coding platforms and sharpening problem-solving skills.",
-    linkedin: "https://www.linkedin.com/",
-    github: "https://github.com/",
-  });
+ const [profile, setProfile] = useState<ProfileState>({
+  name: storedUser?.name || "Guest",
+  college: storedUser?.college || "",
+  intro: storedUser?.intro || "",
+  linkedin: storedUser?.linkedin || "",
+  github: storedUser?.github || "",
+});
 
   const particles = useMemo(
     () =>
