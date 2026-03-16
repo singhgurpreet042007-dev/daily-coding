@@ -1,0 +1,11 @@
+{
+  "id": "addTwo",
+  "title": "Add Two Numbers",
+  "timeLimitMs": 2000,
+  "memoryLimitMb": 256,
+  "testcases": [
+    { "input": "2 3\n", "output": "5\n" },
+    { "input": "10 20\n", "output": "30\n" },
+    { "input": "-5 6\n", "output": "1\n" }
+  ]
+}
