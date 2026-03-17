@@ -61,48 +61,64 @@ export default function Login() {
       })),
     []
   );
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  try {
+    if (mode === "signup") {
+      const res = await API.post("/api/auth/register", {
+        name,
+        email,
+        password,
+      });
+      localStorage.setItem("tempName", name);
 
-    try {
-      if (mode === "signup") {
-        const res = await API.post("/api/auth/register", {
-          name,
-          email,
-          password,
-        });
-
-        if (res.data?.token) {
-          localStorage.setItem("token", res.data.token);
-          window.location.href = "/dashboard";
-          return;
-        }
-
-        alert(res.data?.message || "Account created");
-        setMode("login");
-      } else {
-        const res = await API.post("/api/auth/login", {
-          email,
-          password,
-        });
-
-        if (!res.data?.token) {
-          alert("Token missing from API response");
-          return;
-        }
-
+      if (res.data?.token) {
         localStorage.setItem("token", res.data.token);
-       localStorage.setItem("user", res.data.user);
+
+        localStorage.setItem(
+          "user",
+          JSON.stringify(res.data.user || { name, email })
+        );
+
         window.location.href = "/dashboard";
+        return;
       }
-    } catch (err: any) {
-      alert(err?.response?.data?.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+
+      alert(res.data?.message || "Account created");
+      setMode("login");
+    } else {
+      const res = await API.post("/api/auth/login", {
+        email,
+        password,
+      });
+
+      if (!res.data?.token) {
+        alert("Token missing");
+        return;
+      }
+
+      localStorage.setItem("token", res.data.token);
+
+      localStorage.setItem(
+        "user",
+       JSON.stringify(
+  res.data.user || {
+    name: localStorage.getItem("tempName") || "User",
+    email
+  }
+) 
+      );
+
+      window.location.href = "/dashboard";
     }
-  };
+  } catch (err: any) {
+    alert(err?.response?.data?.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="jn-auth-page">

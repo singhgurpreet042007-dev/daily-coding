@@ -1,153 +1,178 @@
 import { Link, useLocation } from "react-router-dom";
-import {
- FaHome,
- FaCode,
- FaTrophy,
- FaHistory,
- FaUser
-} from "react-icons/fa";
+import { FaHome, FaCode, FaTrophy, FaHistory, FaUser } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
 export default function AppLayout({
- title,
- subtitle,
- children
-}:{
- title:string
- subtitle:string
- children:React.ReactNode
-}){
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: React.ReactNode;
+}) {
+  const location = useLocation();
 
-const location = useLocation();
+  // ✅ USER NAME FIX (JSON parse)
+  let userName = "User";
+  try {
+    const userData = JSON.parse(localStorage.getItem("user") || "{}");
+    userName = userData.name || "User";
+  } catch {
+    userName = "User";
+  }
 
-const nav = [
- {name:"Dashboard",path:"/dashboard",icon:<FaHome/>},
- {name:"Problems",path:"/problems",icon:<FaCode/>},
- {name:"Leaderboard",path:"/leaderboard",icon:<FaTrophy/>},
- {name:"Submissions",path:"/submissions",icon:<FaHistory/>},
- {name:"Profile",path:"/profile",icon:<FaUser/>}
-]
+  // ✅ GREETING FUNCTION
+  function getGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning 🌅";
+    if (hour < 17) return "Good Afternoon ☀️";
+    return "Good Evening 🌙";
+  }
 
-return(
+  // ✅ LIVE GREETING
+  const [greeting, setGreeting] = useState(getGreeting());
 
-<div style={{
- display:"flex",
- minHeight:"100vh",
- background:"#020617"
-}}>
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setGreeting(getGreeting());
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
+  const nav = [
+    { name: "Dashboard", path: "/dashboard", icon: <FaHome /> },
+    { name: "Problems", path: "/problems", icon: <FaCode /> },
+    { name: "Leaderboard", path: "/leaderboard", icon: <FaTrophy /> },
+    { name: "Submissions", path: "/submissions", icon: <FaHistory /> },
+    { name: "Profile", path: "/profile", icon: <FaUser /> },
+  ];
 
-{/* SIDEBAR */}
+  return (
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+      
+      {/* 🔥 SIDEBAR */}
+      <div style={{
+        width: 240,
+        background: "rgba(2,6,23,0.85)",
+        backdropFilter: "blur(14px)",
+        padding: 25,
+        borderRight: "1px solid rgba(96,165,250,.2)",
+        boxShadow: "0 0 30px rgba(59,130,246,.15)"
+      }}>
+        
+        <h2 style={{
+          color: "#60a5fa",
+          fontWeight: 900,
+          marginBottom: 35,
+          textShadow: "0 0 15px rgba(59,130,246,.7)",
+        }}>
+          JudgeNest 🚀
+        </h2>
 
-<div style={{
- width:270,
- background:"linear-gradient(180deg,#020617,#030b1a)",
- padding:30,
- borderRight:"1px solid rgba(96,165,250,.15)",
- boxShadow:"0 0 40px rgba(59,130,246,.2)"
-}}>
+        {nav.map((n) => {
+          const active = location.pathname === n.path;
 
-<h2 style={{
- color:"#60a5fa",
- fontWeight:900,
- fontSize:24,
- marginBottom:40
-}}>
-JudgeNest
-</h2>
+          return (
+            <Link key={n.name} to={n.path} style={{ textDecoration: "none" }}>
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "13px 16px",
+                marginBottom: 12,
+                borderRadius: 14,
+                fontWeight: 700,
+                color: active ? "#fff" : "#cbd5f5",
+                background: active
+                  ? "linear-gradient(90deg,#2563eb,#60a5fa)"
+                  : "transparent",
+                boxShadow: active
+                  ? "0 0 25px rgba(59,130,246,.7)"
+                  : "none",
+                transform: active ? "scale(1.06)" : "scale(1)",
+                transition: "all 0.25s ease",
+                cursor: "pointer",
+              }}
+              onMouseEnter={(e) => {
+                if (!active) {
+                  e.currentTarget.style.background = "rgba(59,130,246,.15)";
+                  e.currentTarget.style.transform = "scale(1.05)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!active) {
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.transform = "scale(1)";
+                }
+              }}
+              >
+                <span style={{ fontSize: 18 }}>
+                  {n.icon}
+                </span>
+                {n.name}
+              </div>
+            </Link>
+          );
+        })}
+      </div>
 
-<div style={{
- display:"grid",
- gap:16
-}}>
+      {/* 🔥 MAIN CONTENT */}
+      <div style={{
+        flex: 1,
+        padding: "30px",
+        color: "white"
+      }}>
 
-{nav.map(n=>{
+        {/* 🔥 TOP BAR */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: 20
+        }}>
+          <div></div>
 
-const active = location.pathname===n.path;
+          {/* 🔥 PREMIUM GREETING */}
+          <div style={{
+            background: "linear-gradient(135deg, #facc15, #fb923c)",
+            padding: "10px 20px",
+            borderRadius: 14,
+            fontSize: 15,
+            fontWeight: 800,
+            color: "#111827",
+            boxShadow: "0 0 25px rgba(251,146,60,.6)",
+            border: "1px solid rgba(255,255,255,.2)",
+            letterSpacing: ".5px",
+            transform: "scale(1.05)",
+            transition: "all 0.3s ease"
+          }}>
+            {greeting}, {userName} 👋
+          </div>
+        </div>
 
-return(
+        {/* 🔥 TITLE */}
+        <h1 style={{
+          fontSize: 38,
+          fontWeight: 900,
+          marginBottom: 8,
+          background: "linear-gradient(90deg,#ffffff,#60a5fa,#facc15)",
+          WebkitBackgroundClip: "text",
+          color: "transparent"
+        }}>
+          {title}
+        </h1>
 
-<Link
-key={n.name}
-to={n.path}
-style={{textDecoration:"none"}}
->
+        {/* SUBTITLE */}
+        <p style={{
+          color: "#94a3b8",
+          marginBottom: 25
+        }}>
+          {subtitle}
+        </p>
 
-<div style={{
- display:"flex",
- alignItems:"center",
- gap:12,
- padding:"13px 18px",
- borderRadius:14,
- fontWeight:700,
- color: active ? "#fff" : "#cbd5f5",
- background: active
-  ? "linear-gradient(90deg,#2563eb,#60a5fa)"
-  : "transparent",
- boxShadow: active
-  ? "0 0 25px rgba(59,130,246,.7)"
-  : "none",
- transition:"0.25s",
- cursor:"pointer"
-}}
-
-className="sidebar-item"
->
-
-<span style={{
- fontSize:18,
- display:"flex",
- alignItems:"center"
-}}>
-{n.icon}
-</span>
-
-{n.name}
-
-</div>
-
-</Link>
-
-)
-
-})}
-
-</div>
-
-</div>
-
-
-{/* MAIN CONTENT */}
-
-<div style={{
- flex:1,
- padding:"40px 50px",
- background:"radial-gradient(circle at top,#0f172a,#020617)"
-}}>
-
-<h1 style={{
- fontSize:42,
- fontWeight:900,
- marginBottom:6,
- background:"linear-gradient(90deg,#ffffff,#60a5fa,#facc15)",
- WebkitBackgroundClip:"text",
- color:"transparent"
-}}>
-{title}
-</h1>
-
-<p style={{
- color:"#94a3b8",
- marginBottom:30
-}}>
-{subtitle}
-</p>
-
-{children}
-
-</div>
-
-</div>
-
-)
-
+        {children}
+      </div>
+    </div>
+  );
 }

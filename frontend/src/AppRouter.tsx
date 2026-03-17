@@ -14,6 +14,7 @@ export default function AppRouter() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
+
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/problems" element={<Problems />} />
         <Route path="/leaderboard" element={<Leaderboard />} />

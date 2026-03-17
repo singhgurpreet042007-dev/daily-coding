@@ -26,6 +26,22 @@ export default function Leaderboard(){
      i===1?"🥈":
      i===2?"🥉":"#"+(i+1);
 
+    // 🔥 FIX HERE
+    let displayName = "";
+
+    try {
+      const parsed = typeof u._id === "string" ? JSON.parse(u._id) : u._id;
+
+      if (typeof parsed === "object") {
+        displayName = parsed.email || parsed.name || "User";
+      } else {
+        displayName = parsed;
+      }
+
+    } catch {
+      displayName = u._id;
+    }
+
     return(
 
      <div
@@ -51,11 +67,12 @@ export default function Leaderboard(){
        {medal}
       </div>
 
+      {/* ✅ FIXED DISPLAY */}
       <div style={{
        fontSize:20,
        fontWeight:700
       }}>
-       {u._id}
+       {displayName}
       </div>
 
       <div style={{
