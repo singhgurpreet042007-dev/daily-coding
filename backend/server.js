@@ -12,6 +12,7 @@ const leaderboardRoute = require("./routes/leaderboard");
 const statsRoute = require("./routes/stats");
 
 
+
 const app = express();
 
 app.use(cors());
@@ -30,6 +31,7 @@ app.use("/submissions", submissionsRoute);
 app.use("/leaderboard", leaderboardRoute);
 app.use("stats", statsRoute);
 
+
 /* DATABASE */
 
 mongoose.connect(process.env.MONGO_URI)
@@ -43,4 +45,5 @@ const PORT = 4000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  
 });
