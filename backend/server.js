@@ -1,48 +1,40 @@
 require("dotenv").config();
-
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
-const authRoute = require("./routes/auth");
-const runRoute = require("./routes/run");   // 👈 ADD
-const submitRoute = require("./routes/submit"); // 👈 if already created
-const submissionsRoute = require("./routes/submissions");
-const leaderboardRoute = require("./routes/leaderboard");
-const statsRoute = require("./routes/stats");
-
-
-
 const app = express();
 
+// middlewares
 app.use(cors());
 app.use(express.json());
 
+// test route
 app.get("/", (req, res) => {
   res.send("JudgeNest backend running 🚀");
 });
 
-/* ROUTES */
+// routes (agar hain to use kar)
+try {
+  app.use("/run", require("./routes/run"));
+  app.use("/submit", require("./routes/submit"));
+  app.use("/problems", require("./routes/problems"));
+  app.use("/api/auth", require("./routes/auth"));
+} catch (e) {
+  console.log("Routes load error:", e.message);
+}
 
-app.use("/api/auth", authRoute);
-app.use("/run", runRoute);        // 👈 ADD
-app.use("/submit", submitRoute);  // 👈 optional
-app.use("/submissions", submissionsRoute);
-app.use("/leaderboard", leaderboardRoute);
-app.use("stats", statsRoute);
-
-
-/* DATABASE */
-
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB connected"))
-.catch((err) => console.log(err));
-
-
-/* SERVER */
+// PORT FIX
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  
-});
+// MongoDB connect
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
+    console.log("MongoDB connected");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.log("MongoDB error:", err.message);
+  });
