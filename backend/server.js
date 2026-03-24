@@ -1,41 +1,22 @@
 require("dotenv").config();
+
+process.on("uncaughtException", (err) => {
+  console.log("UNCAUGHT EXCEPTION:", err);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.log("UNHANDLED REJECTION:", err);
+});
+
 const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-// Test route
 app.get("/", (req, res) => {
-  res.send("JudgeNest backend running 🚀");
+  res.send("Server working 🚀");
 });
 
 const PORT = process.env.PORT || 4000;
 
-// 🔥 Start server safely
-async function startServer() {
-  try {
-    if (!process.env.MONGO_URI) {
-      console.log("❌ MONGO_URI missing");
-    } else {
-      await mongoose.connect(process.env.MONGO_URI);
-      console.log("MongoDB connected ✅");
-    }
-
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-
-  } catch (err) {
-    console.log("❌ Error:", err.message);
-
-    // even if Mongo fails, server should still run
-    app.listen(PORT, () => {
-      console.log(`Server running without DB on port ${PORT}`);
-    });
-  }
-}
-
-startServer();
+app.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
+});
