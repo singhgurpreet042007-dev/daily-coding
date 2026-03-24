@@ -7,19 +7,35 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// routes (agar hai to)
+// Test route
 app.get("/", (req, res) => {
   res.send("JudgeNest backend running 🚀");
 });
 
-// MongoDB connect
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log("MongoDB error:", err.message));
-
-// ⚠️ MOST IMPORTANT LINE
 const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// 🔥 Start server safely
+async function startServer() {
+  try {
+    if (!process.env.MONGO_URI) {
+      console.log("❌ MONGO_URI missing");
+    } else {
+      await mongoose.connect(process.env.MONGO_URI);
+      console.log("MongoDB connected ✅");
+    }
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+
+  } catch (err) {
+    console.log("❌ Error:", err.message);
+
+    // even if Mongo fails, server should still run
+    app.listen(PORT, () => {
+      console.log(`Server running without DB on port ${PORT}`);
+    });
+  }
+}
+
+startServer();
