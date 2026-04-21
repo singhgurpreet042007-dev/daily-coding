@@ -11,3 +11,4 @@ All Leetcode Solutions
 | ------- |
 | [0021-merge-two-sorted-lists](https://github.com/singhgurpreet042007-dev/daily-coding/tree/master/0021-merge-two-sorted-lists) |
 <!---LeetCode Topics End-->
+Gurpreet Singh
